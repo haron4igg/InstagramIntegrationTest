@@ -45,14 +45,13 @@ class ITDetailViewController: UITableViewController {
     func reloadData() {
         
         self.title = self.media!.name
-        AppDelegate.networkActivityIndicatorVisible = true
+        //AppDelegate.networkActivityIndicatorVisible = true
         self.imageView?.hnk_setImageFromURL(NSURL(string: self.media!.imageBig!)!, placeholder: self.imageView!.image, format: nil,
         failure: { (error: NSError?) -> Void in
-            
-            AppDelegate.networkActivityIndicatorVisible = false
+            //AppDelegate.networkActivityIndicatorVisible = false
         }, success: { (image: UIImage) -> Void in
                 self.imageView?.image = image
-                AppDelegate.networkActivityIndicatorVisible = false
+                //AppDelegate.networkActivityIndicatorVisible = false
         })
         
         self.tableView.reloadData()
@@ -65,7 +64,7 @@ class ITDetailViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.media != nil ? (self.media!.comments!.count) : 0
+        return self.media != nil && self.media!.comments != nil ? (self.media!.comments!.count) : 0
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {

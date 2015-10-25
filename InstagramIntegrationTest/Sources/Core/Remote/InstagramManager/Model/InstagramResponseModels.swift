@@ -10,7 +10,7 @@ import Foundation
 import ObjectMapper
 
 class InstagramBaseResponse : NSObject, Mappable {
-    var statusCode: String?
+    var statusCode: Int?
     var statusMessage: String?
     
     required init?(_ map: Map){

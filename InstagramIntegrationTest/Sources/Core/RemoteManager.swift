@@ -10,9 +10,10 @@ import Foundation
 
 
 
-enum RemoteError: ErrorType {
-    case RemoteErrorNoConnection
-    case RemoteErrorSerrializationFailure
+enum RemoteErrorCode: Int {
+    case NoConnection = 1
+    case ServiceError = 2
+    case SerrializationFailure = 3
 }
 
 protocol RemoteManager {

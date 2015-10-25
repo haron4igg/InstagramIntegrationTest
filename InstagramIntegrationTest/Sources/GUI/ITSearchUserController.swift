@@ -54,6 +54,8 @@ class ITSearchUserController: UITableViewController, UISearchBarDelegate {
                 if users != nil {
                     self.users = users
                     self.tableView.reloadData()
+                } else if error != nil {
+                    ErrorHandler.handleError(self, error: error!)
                 }
             })
         }

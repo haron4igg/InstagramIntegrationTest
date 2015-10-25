@@ -38,6 +38,8 @@ class ITMediaDisplayController: UICollectionViewController {
                     if images != nil {
                         self.userMedia = images
                         self.collectionView?.reloadData() 
+                    } else if (error != nil) {
+                        ErrorHandler.handleError(self, error: error!)
                     }
                 })
             }

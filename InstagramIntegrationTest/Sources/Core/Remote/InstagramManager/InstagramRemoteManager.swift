@@ -13,7 +13,8 @@ import ObjectMapper
 
 
 class InstagramRemoteManager: NSObject, RemoteManager, NSURLSessionDelegate {
-
+    
+    static let ErrorDomain = "Core.Remote.InstagramRemoteManager"
     static let BaseURL = "https://api.instagram.com/v1/"
     
     static let UsersMethod = "users"
@@ -76,11 +77,11 @@ class InstagramRemoteManager: NSObject, RemoteManager, NSURLSessionDelegate {
     }
     
     
-    func callGetMethod<T: Mappable>(method: String, parameters: [String: AnyObject], completionHandler : (T?, NSError?) -> Void ) {
+    func callGetMethod<T: InstagramBaseResponse>(method: String, parameters: [String: AnyObject], completionHandler : (T?, NSError?) -> Void ) {
         dropTaskIfNeed(method)
         
         
-        let task = sendGetRequest(InstagramRemoteManager.BaseURL+method, parameters: parameters, completionHandler: { (data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
+        let task = sendGetRequest(InstagramRemoteManager.BaseURL+method, parameters: parameters, completionHandler: { (data: NSData?, response: NSURLResponse?, var error: NSError?) -> Void in
             
             
             print("Response: \(response) Error: \(error)" )
@@ -93,6 +94,17 @@ class InstagramRemoteManager: NSObject, RemoteManager, NSURLSessionDelegate {
                 let bodyString = String(data: data!, encoding: NSUTF8StringEncoding)
                 print("Body: \(bodyString)" )
                 result = Mapper<T>().map(bodyString)
+                
+                if result == nil {
+                    error = NSError(domain: InstagramRemoteManager.ErrorDomain, code: RemoteErrorCode.SerrializationFailure.rawValue, userInfo: [NSLocalizedDescriptionKey : "Unable to parse data."])
+                } else if (result!.statusCode != 200) {
+                    error = NSError(domain: InstagramRemoteManager.ErrorDomain, code: RemoteErrorCode.ServiceError.rawValue, userInfo: [NSLocalizedDescriptionKey : (result!.statusMessage)!])
+                    result = nil
+                }
+            } else if error?.code == NSURLErrorCancelled {
+                error = nil
+            } else {
+                error = NSError(domain: InstagramRemoteManager.ErrorDomain, code: RemoteErrorCode.NoConnection.rawValue, userInfo: ["originalError":error!, NSLocalizedDescriptionKey : "Some connection problem occured."])
             }
             
             completionHandler(result, error)
@@ -102,7 +114,7 @@ class InstagramRemoteManager: NSObject, RemoteManager, NSURLSessionDelegate {
     
     
     func searchUsers(searchString: String, completionHandler: (Array<AnyObject>?, NSError?) -> Void) {
-        callGetMethod(InstagramRemoteManager.UsersSearchMethod, parameters: ["q": searchString, "count": 10], completionHandler: {
+        callGetMethod(InstagramRemoteManager.UsersSearchMethod, parameters: ["q": searchString, "count": 20], completionHandler: {
             (userResponce: InstagramSearchUserResponce?, error: NSError?) in
             completionHandler(userResponce != nil ? userResponce!.users : nil, error)
         })
