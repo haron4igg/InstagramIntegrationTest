@@ -1,0 +1,13 @@
+PODS:
+  - HanekeSwift (0.10.0)
+  - ObjectMapper (0.19)
+
+DEPENDENCIES:
+  - HanekeSwift
+  - ObjectMapper
+
+SPEC CHECKSUMS:
+  HanekeSwift: d6f5bdf9dbdbbc09d59623b2c1d533e46463dd4d
+  ObjectMapper: a88114e5df20f055da63029f25cbc01014847c91
+
+COCOAPODS: 0.39.0
